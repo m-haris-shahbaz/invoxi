@@ -4,6 +4,10 @@ import FormWrapper from "@/components/forms/FormProvider";
 import { multiStepSchema } from "@/schemas";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
+import ProductDetails from "@/components/forms/ProductDetails";
+import PaymentDetails from "@/components/forms/PaymentDetails";
+import { SquarePen } from "lucide-react";
+import InvoiceDocument from "@/components/pages/InvoiceDocument";
 
 function StepNavigator({}) {
   const steps = [
@@ -49,20 +53,21 @@ function StepNavigator({}) {
   return (
     <div className="space-y-6">
       {currentStep === 0 && <CustomerDetails />}
-      {/* Add other step components here */}
+      {currentStep === 1 && <ProductDetails />}
+      {currentStep === 2 && <PaymentDetails />}
 
       <div className="flex justify-between pt-4">
         <button
           onClick={handlePrevious}
           disabled={currentStep === 0}
-          className="px-4 py-2 bg-gray-200 rounded-lg disabled:opacity-50"
+          className="px-4 py-2 w-1/3 border rounded-lg disabled:opacity-50"
         >
           Previous
         </button>
         <button
           onClick={handleNext}
           disabled={currentStep === steps.length - 1}
-          className="px-4 py-2 bg-green-500 text-white rounded-lg disabled:opacity-50"
+          className="px-4 py-2 w-1/2 font-semibold bg-gradient-to-b from-green-400 to-green-600 text-white rounded-lg disabled:opacity-50"
         >
           Next
         </button>
@@ -77,36 +82,19 @@ export default function Home() {
       <FormWrapper>
         {/* Left Section - Form Steps */}
         <div className="flex flex-col w-1/2 space-y-4 border-r p-6">
-          <h2 className="text-xl font-semibold mb-4">Invoice Details</h2>
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-semibold mb-4">Invoice Details</h2>
+            <button className="border p-2 rounded-lg flex justify-center items-center">
+              <SquarePen className="mr-2 w-4 h-4" />
+              Save as Draft
+            </button>
+          </div>
           <StepNavigator />
         </div>
 
         {/* Right Section - Invoice Preview */}
         <div className="w-1/2 p-6">
-          <div className="border border-gray-200 bg-white rounded-lg p-6 min-h-[600px]">
-            <h3 className="text-2xl font-bold mb-6">INVOICE</h3>
-            <div className="space-y-4">
-              <div className="border-b pb-4">
-                <p className="text-gray-600">Invoice #: INV-001</p>
-                <p className="text-gray-600">
-                  Date: {new Date().toLocaleDateString()}
-                </p>
-              </div>
-              <div className="border-b pb-4">
-                <p className="font-semibold mb-2">Bill To:</p>
-                <p className="text-gray-600">[Customer Name]</p>
-                <p className="text-gray-600">[Customer Email]</p>
-              </div>
-              <div className="border-b pb-4">
-                <p className="font-semibold mb-2">Description:</p>
-                <p className="text-gray-600">[Description will appear here]</p>
-              </div>
-              <div className="text-right">
-                <p className="font-semibold">Total Amount:</p>
-                <p className="text-2xl font-bold text-green-600">$0.00</p>
-              </div>
-            </div>
-          </div>
+          <InvoiceDocument />
         </div>
       </FormWrapper>
     </div>
