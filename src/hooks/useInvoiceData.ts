@@ -4,31 +4,31 @@ import type { InvoiceFormData } from "@/schemas";
 export function useInvoiceData() {
   const { control } = useFormContext<InvoiceFormData>();
 
-  // Watch all form fields
-  const formData = useWatch({
+  // Watch items specifically for calculations
+  const items = useWatch({
     control,
+    name: "items",
   });
 
-  // Calculate totals
-  const subtotal =
-    formData?.items?.reduce((acc, item) => {
-      return acc + Number(item.price) * Number(item.quantity);
-    }, 0) ?? 0;
+  const calculations = {
+    subtotal:
+      items?.reduce((acc, item) => {
+        const quantity = Number(item?.quantity) || 0;
+        const price = Number(item?.price) || 0;
+        return acc + quantity * price;
+      }, 0) || 0,
 
-  const tax = subtotal * 0.1; // 10% tax example
-  const total = subtotal + tax;
+    get tax() {
+      return this.subtotal * 0.1;
+    },
+
+    get total() {
+      return this.subtotal + this.tax;
+    },
+  };
 
   return {
-    customer: formData?.customer ?? {},
-    items: formData?.items ?? [],
-    paymentDetails: {
-      dueDate: formData?.paymentDue,
-      status: formData?.status,
-    },
-    calculations: {
-      subtotal,
-      tax,
-      total,
-    },
+    items: items || [],
+    calculations,
   };
 }

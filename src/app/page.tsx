@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import ProductDetails from "@/components/forms/ProductDetails";
 import PaymentDetails from "@/components/forms/PaymentDetails";
-import { SquarePen } from "lucide-react";
+import { SquarePen, Save, Printer, Download, Send } from "lucide-react";
 import InvoiceDocument from "@/components/pages/InvoiceDocument";
 
 function StepNavigator({}) {
@@ -78,23 +78,48 @@ function StepNavigator({}) {
 
 export default function Home() {
   return (
-    <div className="px-32 flex h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
       <FormWrapper>
-        {/* Left Section - Form Steps */}
-        <div className="flex flex-col w-1/2 space-y-4 border-r p-6">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-semibold mb-4">Invoice Details</h2>
-            <button className="border p-2 rounded-lg flex justify-center items-center">
-              <SquarePen className="mr-2 w-4 h-4" />
-              Save as Draft
-            </button>
-          </div>
-          <StepNavigator />
-        </div>
+        <div className="flex gap-6 px-4 py-6 max-w-[1400px] mx-auto">
+          <div className="w-64 space-y-4">
+            <div className="bg-white p-4 border rounded-lg shadow-sm space-y-3">
+              <h2 className="font-semibold text-gray-800">Tools</h2>
+              <div className="space-y-2">
+                <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-md">
+                  <Save className="w-4 h-4" />
+                  Save Draft
+                </button>
+                <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-md">
+                  <Printer className="w-4 h-4" />
+                  Print
+                </button>
+                <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-md">
+                  <Download className="w-4 h-4" />
+                  Download PDF
+                </button>
+                <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-md">
+                  <Send className="w-4 h-4" />
+                  Send Invoice
+                </button>
+              </div>
+            </div>
 
-        {/* Right Section - Invoice Preview */}
-        <div className="w-1/2 p-6">
-          <InvoiceDocument />
+            <div className="bg-white p-4 border rounded-lg shadow-sm">
+              <h2 className="font-semibold text-gray-800 mb-3">
+                Quick Actions
+              </h2>
+              <button className="w-full bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600">
+                Mark as Paid
+              </button>
+            </div>
+          </div>
+
+          {/* Document Container */}
+          <div className="flex-1 flex justify-center">
+            <div className="inline-block">
+              <InvoiceDocument />
+            </div>
+          </div>
         </div>
       </FormWrapper>
     </div>

@@ -1,98 +1,215 @@
 "use client";
 import { useInvoiceData } from "@/hooks/useInvoiceData";
 import { format } from "date-fns";
+import { useEffect, useState } from "react";
+import { useFieldArray, useFormContext } from "react-hook-form";
+import { InvoiceFormData } from "@/schemas";
+import { Trash2 } from "lucide-react";
 
 export default function InvoiceDocument() {
-  const { customer, items, paymentDetails, calculations } = useInvoiceData();
+  const {
+    register,
+    control,
+    formState: { errors },
+  } = useFormContext<InvoiceFormData>();
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "items",
+  });
+  const [invoiceNumber] = useState(`INV-${Date.now().toString().slice(-3)}`);
+  const [issueDate] = useState<Date>(new Date());
+  const { calculations } = useInvoiceData();
 
   return (
-    <div className="border border-gray-200 bg-white rounded-lg p-8 min-h-[600px] shadow-sm">
+    <div
+      className="border border-gray-200 bg-white rounded-lg p-8 shadow-sm"
+      style={{ width: "794px", height: "1123px" }}
+    >
       {/* Header */}
       <div className="flex justify-between items-start mb-8">
         <div>
           <h3 className="text-2xl font-bold text-gray-800">INVOICE</h3>
-          <p className="text-gray-500 mt-1">
-            INV-
-            {Math.floor(Math.random() * 1000)
-              .toString()
-              .padStart(3, "0")}
-          </p>
+          <p className="text-gray-500 mt-1">{invoiceNumber}</p>
         </div>
-        <div className="text-right">
+        <div className="text-right space-y-2">
           <p className="text-gray-600">
-            Issue Date: {format(new Date(), "dd MMM yyyy")}
+            Issue Date: {format(issueDate, "dd MMM yyyy")}
           </p>
-          {paymentDetails.dueDate && (
-            <p className="text-gray-600">
-              Due Date:{" "}
-              {format(new Date(paymentDetails.dueDate), "dd MMM yyyy")}
-            </p>
-          )}
+          <div>
+            <label className="block text-sm text-gray-600">Due Date</label>
+            <input
+              type="date"
+              {...register("paymentDue")}
+              className="border rounded p-1 text-sm"
+            />
+          </div>
         </div>
       </div>
 
       {/* Company & Customer Info */}
-      <div className="flex justify-between mb-8">
-        <div className="w-1/2">
-          <h4 className="font-semibold text-gray-700 mb-2">From</h4>
-          <div className="text-gray-600">
-            <p className="font-medium">Your Company Name</p>
-            <p>123 Business Street</p>
-            <p>City, Country</p>
-            <p>contact@company.com</p>
+      <div className="flex justify-between mb-8 gap-8">
+        <div className="w-1/2 space-y-4">
+          <h4 className="font-semibold text-gray-700">From</h4>
+          <div className="space-y-2">
+            <input
+              type="text"
+              placeholder="Your Company"
+              className="w-full p-2 border rounded"
+            />
+            <textarea
+              placeholder="Company Address"
+              rows={3}
+              className="w-full p-2 border rounded max-h-[140px]"
+            />
           </div>
         </div>
-        <div className="w-1/2">
-          <h4 className="font-semibold text-gray-700 mb-2">Bill To</h4>
-          <div className="text-gray-600">
-            <p className="font-medium">{customer.name || "[Customer Name]"}</p>
-            <p>{customer.company || "[Company]"}</p>
-            <p>{customer.email || "[Email]"}</p>
-            <p>{customer.phoneNumber || "[Phone]"}</p>
+        <div className="w-1/2 space-y-4">
+          <h4 className="font-semibold text-gray-700">Bill To</h4>
+          <div className="space-y-2">
+            <input
+              type="text"
+              {...register("customer.name")}
+              placeholder="Customer Name"
+              className="w-full p-2 border rounded"
+            />
+            <input
+              type="text"
+              {...register("customer.company")}
+              placeholder="Company Name"
+              className="w-full p-2 border rounded"
+            />
+            <input
+              type="email"
+              {...register("customer.email")}
+              placeholder="Email"
+              className="w-full p-2 border rounded"
+            />
+            <input
+              type="tel"
+              {...register("customer.phoneNumber")}
+              placeholder="Phone"
+              className="w-full p-2 border rounded"
+            />
           </div>
         </div>
       </div>
 
-      {/* Items Table */}
+      {/* Items Section */}
       <div className="mb-8">
         <table className="w-full">
           <thead>
             <tr className="border-b border-gray-300">
               <th className="py-2 text-left text-gray-600">Item</th>
-              <th className="py-2 text-right text-gray-600">Qty</th>
-              <th className="py-2 text-right text-gray-600">Price</th>
-              <th className="py-2 text-right text-gray-600">Total</th>
+              <th className="py-2 text-right text-gray-600 w-24">Qty</th>
+              <th className="py-2 text-right text-gray-600 w-32">Price</th>
+              <th className="py-2 text-right text-gray-600 w-32">Total</th>
+              <th className="py-2 w-16"></th>
             </tr>
           </thead>
           <tbody>
-            {items.length > 0 ? (
-              items.map((item, index) => (
-                <tr key={item.id} className="border-b border-gray-100">
-                  <td className="py-3">
-                    <p className="font-medium text-gray-800">{item.name}</p>
-                    <p className="text-sm text-gray-500">{item.description}</p>
-                  </td>
-                  <td className="py-3 text-right">{item.quantity}</td>
-                  <td className="py-3 text-right">${item.price?.toFixed(2)}</td>
-                  <td className="py-3 text-right">
-                    ${(item.quantity! * item.price!).toFixed(2)}
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={4} className="py-3 text-center text-gray-500">
-                  No items added yet
+            {fields.map((field, index) => (
+              <tr key={field.id} className="border-b border-gray-100">
+                <td className="py-2">
+                  <div className="space-y-1">
+                    <input
+                      type="text"
+                      {...register(`items.${index}.name`)}
+                      placeholder="Item name"
+                      className="w-full p-2 border rounded"
+                    />
+                    {errors.items?.[index]?.name && (
+                      <p className="text-red-500 text-xs">
+                        {errors.items[index]?.name?.message}
+                      </p>
+                    )}
+                    <input
+                      type="text"
+                      {...register(`items.${index}.description`)}
+                      placeholder="Description"
+                      className="w-full p-2 border rounded text-sm"
+                    />
+                  </div>
+                </td>
+                <td className="py-2">
+                  <input
+                    type="number"
+                    {...register(`items.${index}.quantity`, {
+                      valueAsNumber: true,
+                    })}
+                    placeholder="0"
+                    className="w-full p-2 border rounded text-right"
+                  />
+                  {errors.items?.[index]?.quantity && (
+                    <p className="text-red-500 text-xs">
+                      {errors.items[index]?.quantity?.message}
+                    </p>
+                  )}
+                </td>
+                <td className="py-2">
+                  <input
+                    type="number"
+                    {...register(`items.${index}.price`, {
+                      valueAsNumber: true,
+                    })}
+                    placeholder="0.00"
+                    className="w-full p-2 border rounded text-right"
+                  />
+                  {errors.items?.[index]?.price && (
+                    <p className="text-red-500 text-xs">
+                      {errors.items[index]?.price?.message}
+                    </p>
+                  )}
+                </td>
+                <td className="py-2 text-right">
+                  ${((field.quantity || 0) * (field.price || 0)).toFixed(2)}
+                </td>
+                <td className="py-2">
+                  <button
+                    type="button"
+                    onClick={() => remove(index)}
+                    className="p-1 text-red-500 hover:bg-red-50 rounded"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
                 </td>
               </tr>
-            )}
+            ))}
           </tbody>
         </table>
+        <button
+          type="button"
+          onClick={() =>
+            append({
+              id: crypto.randomUUID(),
+              name: "",
+              price: 0,
+              stock: 0,
+              description: "",
+              quantity: 1,
+            })
+          }
+          className="mt-4 text-green-600 font-medium hover:text-green-700"
+        >
+          + Add Item
+        </button>
       </div>
 
-      {/* Totals */}
-      <div className="border-t border-gray-200 pt-4">
-        <div className="w-1/2 ml-auto space-y-2">
+      {/* Footer Options */}
+      <div className="mt-8 pt-8 border-t border-gray-200 flex justify-between items-start">
+        <div className="space-y-2">
+          <div className="flex items-center space-x-2">
+            <label className="text-sm text-gray-600">Status:</label>
+            <select {...register("status")} className="border rounded p-1">
+              <option value="pending">Pending</option>
+              <option value="paid">Paid</option>
+            </select>
+          </div>
+          <div className="flex items-center space-x-2">
+            <input type="checkbox" {...register("isDraft")} />
+            <label className="text-sm text-gray-600">Save as Draft</label>
+          </div>
+        </div>
+        <div className="w-1/3 space-y-2 text-right">
           <div className="flex justify-between text-gray-600">
             <span>Subtotal:</span>
             <span>${calculations.subtotal.toFixed(2)}</span>
@@ -101,29 +218,10 @@ export default function InvoiceDocument() {
             <span>Tax (10%):</span>
             <span>${calculations.tax.toFixed(2)}</span>
           </div>
-          <div className="flex justify-between text-lg font-bold text-gray-800 pt-2 border-t border-gray-200">
+          <div className="flex justify-between font-bold text-lg">
             <span>Total:</span>
             <span>${calculations.total.toFixed(2)}</span>
           </div>
-        </div>
-      </div>
-
-      {/* Footer */}
-      <div className="mt-8 pt-8 border-t border-gray-200">
-        <div className="text-gray-500 text-sm">
-          <p className="font-medium mb-1">
-            Payment Status:
-            <span
-              className={`ml-2 px-2 py-1 rounded-full text-xs ${
-                paymentDetails.status === "paid"
-                  ? "bg-green-100 text-green-800"
-                  : "bg-yellow-100 text-yellow-800"
-              }`}
-            >
-              {paymentDetails.status?.toUpperCase()}
-            </span>
-          </p>
-          <p>Thank you for your business!</p>
         </div>
       </div>
     </div>
