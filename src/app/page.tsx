@@ -34,7 +34,7 @@ function InvoiceContent() {
   });
 
   return (
-    <div className="flex gap-6 px-4 py-6 max-w-[1400px] mx-auto">
+    <div className="flex gap-6 px-4 py-6 container mx-auto">
       {/* Toolbar */}
       <div className="w-64 space-y-4">
         <div className="bg-white p-4 border rounded-lg shadow-sm space-y-3">
