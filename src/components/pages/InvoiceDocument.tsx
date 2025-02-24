@@ -1,4 +1,5 @@
 "use client";
+import { forwardRef } from "react";
 import { useInvoiceData } from "@/hooks/useInvoiceData";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
@@ -6,7 +7,7 @@ import { useFieldArray, useFormContext } from "react-hook-form";
 import { InvoiceFormData } from "@/schemas";
 import { Trash2 } from "lucide-react";
 
-export default function InvoiceDocument() {
+const InvoiceDocument = forwardRef<HTMLDivElement>((props, ref) => {
   const {
     register,
     control,
@@ -16,14 +17,15 @@ export default function InvoiceDocument() {
     control,
     name: "items",
   });
-  const [invoiceNumber] = useState(`INV-${Date.now().toString().slice(-3)}`);
+  const [invoiceNumber] = useState(`INV-001`);
   const [issueDate] = useState<Date>(new Date());
   const { calculations } = useInvoiceData();
 
   return (
     <div
-      className="border border-gray-200 bg-white rounded-lg p-8 shadow-sm"
-      style={{ width: "794px", height: "1123px" }}
+      ref={ref}
+      className="border border-gray-200 bg-white rounded-lg p-8 shadow-sm print:shadow-none print:border-0"
+      style={{ width: "794px", minHeight: "1123px" }}
     >
       {/* Header */}
       <div className="flex justify-between items-start mb-8">
@@ -161,7 +163,7 @@ export default function InvoiceDocument() {
                   )}
                 </td>
                 <td className="py-2 text-right">
-                  ${((field.quantity || 0) * (field.price || 0)).toFixed(2)}
+                  {((field.quantity || 0) * (field.price || 0)).toFixed(2)}
                 </td>
                 <td className="py-2">
                   <button
@@ -226,4 +228,7 @@ export default function InvoiceDocument() {
       </div>
     </div>
   );
-}
+});
+
+InvoiceDocument.displayName = "InvoiceDocument";
+export default InvoiceDocument;

@@ -10,6 +10,19 @@ export default function FormWrapper({
   const methods = useForm({
     resolver: zodResolver(invoiceSchema),
     mode: "onChange",
+    defaultValues: {
+      customer: {
+        id: crypto.randomUUID(),
+        name: "",
+        email: "",
+        company: "",
+        phoneNumber: "",
+      },
+      items: [],
+      paymentDue: "",
+      status: "pending",
+      isDraft: false,
+    },
   });
 
   return <FormProvider {...methods}>{children}</FormProvider>;
