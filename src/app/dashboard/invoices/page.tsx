@@ -36,7 +36,7 @@ export default function InvoicesPage() {
           <h1 className="text-2xl font-semibold text-gray-800">Invoices</h1>
           <p className="text-gray-500 text-sm mt-1">Manage your invoices</p>
         </div>
-        <Button className="bg-blue-600 hover:bg-blue-700">
+        <Button>
           <Plus className="w-4 h-4 mr-2" />
           New Invoice
         </Button>

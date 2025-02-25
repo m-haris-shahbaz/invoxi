@@ -5,26 +5,25 @@ import {
   Search,
   Filter,
   MoreVertical,
-  Mail,
-  Phone,
-  Building,
+  Package,
+  Tag,
+  AlertCircle,
 } from "lucide-react";
 import Link from "next/link";
 
-export default function CustomersPage() {
-  const customers = [
+export default function ProductsPage() {
+  const products = [
     {
       id: "1",
-      name: "John Doe",
-      email: "john@example.com",
-      company: "Tech Corp",
-      phone: "+1 234 567 890",
-      totalInvoices: 5,
-      totalSpent: 2499.95,
-      status: "active",
-      lastInvoice: "2024-01-15",
+      name: "Premium Widget",
+      sku: "WDG-001",
+      price: 199.99,
+      stock: 45,
+      category: "Electronics",
+      status: "in_stock",
+      description: "High-quality widget with premium features",
     },
-    // Add more customer data as needed
+    // Add more product data as needed
   ];
 
   return (
@@ -32,14 +31,14 @@ export default function CustomersPage() {
       {/* Header Section */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-800">Customers</h1>
+          <h1 className="text-2xl font-semibold text-gray-800">Products</h1>
           <p className="text-gray-500 text-sm mt-1">
-            Manage your customer base
+            Manage your product inventory
           </p>
         </div>
         <Button>
           <Plus className="w-4 h-4 mr-2" />
-          Add Customer
+          Add Product
         </Button>
       </div>
 
@@ -49,7 +48,7 @@ export default function CustomersPage() {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
           <input
             type="text"
-            placeholder="Search customers..."
+            placeholder="Search products..."
             className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -59,16 +58,23 @@ export default function CustomersPage() {
         </Button>
       </div>
 
-      {/* Customers Grid */}
+      {/* Products Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {customers.map((customer) => (
+        {products.map((product) => (
           <div
-            key={customer.id}
+            key={product.id}
             className="bg-white rounded-lg border border-gray-200 hover:shadow-lg transition-shadow duration-200"
           >
             <div className="p-5">
               <div className="flex justify-between items-start mb-4">
-                <h3 className="font-semibold text-gray-800">{customer.name}</h3>
+                <div>
+                  <h3 className="font-semibold text-gray-800">
+                    {product.name}
+                  </h3>
+                  <span className="text-xs font-medium text-gray-500">
+                    {product.sku}
+                  </span>
+                </div>
                 <Button variant="ghost" size="icon">
                   <MoreVertical className="w-4 h-4" />
                 </Button>
@@ -76,36 +82,31 @@ export default function CustomersPage() {
 
               <div className="space-y-3">
                 <div className="flex items-center gap-2 text-gray-600">
-                  <Building className="w-4 h-4" />
-                  <span className="text-sm">{customer.company}</span>
+                  <Tag className="w-4 h-4" />
+                  <span className="text-sm">${product.price.toFixed(2)}</span>
                 </div>
                 <div className="flex items-center gap-2 text-gray-600">
-                  <Mail className="w-4 h-4" />
-                  <span className="text-sm">{customer.email}</span>
+                  <Package className="w-4 h-4" />
+                  <span className="text-sm">Stock: {product.stock}</span>
                 </div>
-                <div className="flex items-center gap-2 text-gray-600">
-                  <Phone className="w-4 h-4" />
-                  <span className="text-sm">{customer.phone}</span>
-                </div>
-                <div className="pt-3 border-t">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Total Invoices</span>
-                    <span className="font-medium">
-                      {customer.totalInvoices}
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-sm mt-1">
-                    <span className="text-gray-500">Total Spent</span>
-                    <span className="font-medium">
-                      ${customer.totalSpent.toFixed(2)}
-                    </span>
-                  </div>
+                <p className="text-sm text-gray-500">{product.description}</p>
+
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+                      product.stock > 0
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
+                    }`}
+                  >
+                    {product.stock > 0 ? "In Stock" : "Out of Stock"}
+                  </span>
                 </div>
               </div>
             </div>
 
             <div className="border-t p-4">
-              <Link href={`/dashboard/customers/${customer.id}`}>
+              <Link href={`/dashboard/products/${product.id}`}>
                 <Button variant="ghost" className="w-full text-blue-600">
                   View Details
                 </Button>
