@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { Eye, EyeOff, LoaderCircle } from "lucide-react";
 import { useState } from "react";
 import { login } from "./action";
+import { useAuth } from "@/context/AuthContext";
 
 const AuthPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -17,6 +18,8 @@ const AuthPage = () => {
   } = useForm<SignInSchema>({
     resolver: zodResolver(signInSchema),
   });
+
+  const { signInWithGoogle } = useAuth();
 
   const onSubmit = async (data: SignInSchema) => {
     setLoading(true);
@@ -115,6 +118,7 @@ const AuthPage = () => {
           variant="outline"
           className="w-full shadow-sm"
           disabled={loading}
+          onClick={signInWithGoogle}
         >
           <img className="w-5 h-5 mr-2" src="/icons/google.svg" alt="Google" />
           Sign in with Google
