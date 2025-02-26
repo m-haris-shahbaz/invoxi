@@ -2,9 +2,14 @@
 import { Button } from "@/components/ui/button";
 import { Plus, Search, Filter, MoreVertical, FileText } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 export default function InvoicesPage() {
+  const router = useRouter();
+  const routeToNewInvoice = () => {
+    router.push("/dashboard/invoices/new");
+  };
   const invoices = [
     {
       id: "befjbhejbfe",
@@ -36,7 +41,10 @@ export default function InvoicesPage() {
           <h1 className="text-2xl font-semibold text-gray-800">Invoices</h1>
           <p className="text-gray-500 text-sm mt-1">Manage your invoices</p>
         </div>
-        <Button>
+        <Button
+          className="flex items-center"
+          onClick={() => routeToNewInvoice()}
+        >
           <Plus className="w-4 h-4 mr-2" />
           New Invoice
         </Button>

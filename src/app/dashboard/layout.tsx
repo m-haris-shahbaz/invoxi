@@ -1,14 +1,9 @@
-import Navbar from "@/components/layout/Navbar";
+import DashboardLayout from "@/components/layout/DashboardLayout";
 
-export default function RootLayout({
+export default function DashboardRootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
-  return (
-    <>
-      <Navbar />
-      <main className="flex gap-6 px-4 py-6 container mx-auto">{children}</main>
-    </>
-  );
+}) {
+  return <DashboardLayout>{children}</DashboardLayout>;
 }
